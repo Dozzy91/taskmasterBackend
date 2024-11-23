@@ -24,6 +24,11 @@ app.use('/task', taskRoutes);
 // authRoute
 app.use('/auth', authRoutes);
 
+// invalid routes
+app.use('*', (req, res) => {
+    return res.status(404).json({ message: 'URL does not exist' });
+});
+
 // run server
 app.listen(PORT, () => {
     // console.log(`Server running at port ${PORT}`)
