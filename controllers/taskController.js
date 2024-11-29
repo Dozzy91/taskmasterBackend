@@ -1,4 +1,5 @@
 const pool = require('../db/index');
+const dayjs = require('dayjs');
 
 const getTasks = async (req, res) => {
     try {
@@ -21,6 +22,8 @@ const getTasks = async (req, res) => {
 const createTask = async (req, res) => {
     const { task, description, priority, completed, due_date } = req.body;
 
+    const isoDate = new Date(due_date).toISOString();
+
     try {
         if (!task) {
             return res.status(400).json({ message: 'Task is required' });
@@ -32,7 +35,7 @@ const createTask = async (req, res) => {
 
         const result = await pool.query(
             'INSERT INTO tasks (task, description, priority, completed, due_date, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-            [task, description, priority, completed || false, due_date, req.user.id]
+            [task, description, priority, completed || false, isoDate, req.user.id]
         );
         res.status(201).json(result.rows[0]);
     } catch (error) {
@@ -118,8 +121,9 @@ const orderByDate = async (req, res) => {
     }
 };
 
-const filter = async (req, res) => {
-    const { priority, due_date } = req.body;
+const filterByDate = async (req, res) => {
+    const { due_date } = req.body;
+    const due_date_key = [`%${due_date}%`];
     try {
         const result = await pool.query(`SELECT 
             id,
@@ -130,7 +134,31 @@ const filter = async (req, res) => {
             TO_CHAR(created_at, 'Mon DD, YYYY HH12:MI AM') AS created_at,
             TO_CHAR(due_date, 'Mon DD, YYYY HH12:MI AM') AS due_date,
             user_id
-            FROM tasks WHERE user_id = $1 AND (priority = $2 OR due_date = $3) ORDER by id DESC `, [req.user.id, priority, due_date]);
+            FROM tasks WHERE user_id = $1 AND (due_date::text ILIKE $2) ORDER by id DESC `, [req.user.id, due_date_key[0]]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'No correlation' });
+        }
+        res.status(200).json(result.rows);
+    }catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const filterByPriority = async (req, res) => {
+    const { priority} = req.body;
+    const priority_key = `%${priority}%`;
+    try {
+        const result = await pool.query(`SELECT 
+            id,
+            task,
+            description,
+            priority,
+            completed,
+            TO_CHAR(created_at, 'Mon DD, YYYY HH12:MI AM') AS created_at,
+            TO_CHAR(due_date, 'Mon DD, YYYY HH12:MI AM') AS due_date,
+            user_id
+            FROM tasks WHERE user_id = $1 AND (priority::text ILIKE $2) ORDER by id DESC `, [req.user.id, priority_key]);
         
         if (result.rows.length === 0) {
             return res.status(404).json({ message: 'No correlation' });
@@ -169,4 +197,4 @@ const search = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-module.exports = { getTasks, createTask, updateTask, deleteTask, orderByPriority, orderByDate, filter, search }
+module.exports = { getTasks, createTask, updateTask, deleteTask, orderByPriority, orderByDate, filterByPriority, filterByDate, search }

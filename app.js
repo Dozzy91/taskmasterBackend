@@ -26,7 +26,7 @@ app.use('/auth', authRoutes);
 
 // invalid routes
 app.use('*', (req, res) => {
-    return res.status(404).json({ message: 'URL does not exist' });
+    return res.status(404).json({ message: 'Page not found' });
 });
 
 // run server

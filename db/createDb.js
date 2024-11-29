@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS tasks (
     description TEXT,
     priority PRIORITY NOT NULL,
     completed BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT NOW(),
-    due_date TIMESTAMP NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    due_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     user_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
