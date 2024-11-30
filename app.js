@@ -5,7 +5,7 @@ const cors = require('cors');
 const taskRoutes = require('./routes/taskRoutes');
 const authRoutes = require('./routes/authRoutes')
 const { dbCreate } = require('./db/createDb');
-const pool = require('../db/index');
+const pool = require('./db/index');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
