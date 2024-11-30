@@ -7,11 +7,12 @@ const client = new Client({
     user: process.env.PG_USER,
     host: process.env.PG_HOST,
     password: process.env.PG_PASSWORD,
-    port: process.env.PG_PORT
+    port: process.env.PG_PORT,
+
 });
 
 // DB Schema
-const dbName = 'taskmaster';
+const dbName = process.env.PG_DATABASE;
 const createDatabase = `CREATE DATABASE ${dbName};`;
 
 // create DB tables
@@ -91,7 +92,8 @@ async function dbCreate() {
     host: process.env.PG_HOST,
     password: process.env.PG_PASSWORD,
     database: 'postgres',
-    port: process.env.PG_PORT
+    port: process.env.PG_PORT,
+    pg_port: process.env.PG_PORT
     });
 
     try {

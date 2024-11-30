@@ -17,6 +17,14 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 
+// render db connection
+pool.connect((err, client, release) => {
+    if (err) {
+        return console.error('Error acquiring client', err.stack);
+      }
+      console.log('Database connected successfully');
+      release();
+});
 
 // taskroutes
 app.use('/task', taskRoutes);
