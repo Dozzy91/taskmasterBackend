@@ -1,7 +1,7 @@
 // jwtwebtoken: This is for generating and verifying tokens for the user
-// bycrpt: This is for hasnign and comapring hashed passwords
+// bycrptjs: This is for hasnign and comapring hashed passwords
 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const pool = require('../db/index'); // PostgreSQL connection
 
 const registerUser = async (req, res) => {
