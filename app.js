@@ -27,6 +27,11 @@ pool.connect((err, client, release) => {
       release();
 });
 
+// let's call this the landing route to show up on render
+app.get('/', (req, res) => {
+    res.send('Welcome to Taskmaster Backend!');
+  });
+
 // taskroutes
 app.use('/task', taskRoutes);
 
