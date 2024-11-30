@@ -109,6 +109,7 @@ async function dbCreate() {
         if(DbExists.rows.length > 0) {
             if (process.env.NODE_ENV !== 'test') {
                 console.log(`Skipping process...`);
+                await createTables();
             }
         } else {
             await client.query(createDatabase);
